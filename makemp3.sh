@@ -91,7 +91,7 @@ do
     fi
   
     lame --nohist --replaygain-accurate\
-         "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
+         "$SOURCEFILENAME" /dev/null 2>&1 | tee /tmp/lameout.txt
 
     REPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
     SCALEFACTOR=`echo "tmp=e(((0$REPLAYGAIN+4.5)/20)*l(10)); tmp" | bc -l`
@@ -107,6 +107,7 @@ do
           "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
 
     rm -f /tmp/lameout.txt
+    touch "$TARGETFILENAME" -r "$SOURCEFILENAME"
     sync
   else
     message "Incompatible directory structure: $ORIGIN" 
