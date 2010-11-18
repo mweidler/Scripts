@@ -1,0 +1,41 @@
+Collection of useful scripts.
+
+
+Installation/Uninstall
+======================
+
+make install
+    - creates $HOME/bin, if necessary
+    - copies all scripts to $HOME/bin
+
+make link
+    - creates $HOME/bin, if necessary
+    - links all scripts from $HOME/bin to the project's files
+    This is useful, if you are a developer of the scripts.
+
+make uninstall
+    - removes/deletes all scripts from $HOME/bin
+
+
+
+Description
+===========
+
+makemp3.sh
+     Encodes all wav-files in the current directory (and subfolders)
+     to mp3-files and copies them to $HOME/MP3 directory.
+
+makebackup.sh <target-path>
+     RSync- and hard-link-based backup script.
+
+
+
+Copyright (C) 2010 Marc Weidler (marc.weidler@web.de)
+
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
+SERVICING, REPAIR OR CORRECTION.
