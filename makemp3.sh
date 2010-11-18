@@ -5,7 +5,7 @@
 # Encodes a wav-audio file into mp3 format, using lame.
 #
 # Features:
-# - Normalize audio loudness to 93dB
+# - Normalize audio loudness to (89+1)dB
 # - Automatic ID3-Tagging
 #
 # Requirements:
@@ -59,8 +59,8 @@ do
   NUMTOKENS=`echo $ORIGIN | awk -F"/" '{print NF}'`
   if [ $NUMTOKENS -ge 4 ]
   then
-    FILENAME=`echo $ORIGIN | awk -F"/" '{print $(NF)}' | awk -F"." '{print $1}'`
-    FILEEXT=`echo $ORIGIN | awk -F"/" '{print $(NF)}' | awk -F"." '{print $2}'`
+    FILENAME=`echo $ORIGIN | awk -F"/" '{print $(NF)}' | awk -F".wav" '{print $1}'`
+    FILEEXT="wav"
     FILEPATH=`echo $ORIGIN | awk -F"/" '{for (i=2;i<NF;i++) printf "%s/",$i}'`
 
     TRACKTITLE=$FILENAME
@@ -85,19 +85,21 @@ do
 
     if [ ! -d "$TARGETPATH" ]
     then
-      echo "Creating target path '$TARGETPATH'"
+      message "Creating target path '$TARGETPATH'"
       mkdir -p "$TARGETPATH"
       message ""
     fi
-  
+
+    # Analyze gain for normalization  
     lame --nohist --replaygain-accurate\
          "$SOURCEFILENAME" /dev/null 2>&1 | tee /tmp/lameout.txt
 
     REPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
-    SCALEFACTOR=`echo "tmp=e(((0$REPLAYGAIN+4.5)/20)*l(10)); tmp" | bc -l`
+    SCALEFACTOR=`echo "tmp=e(((1$REPLAYGAIN)/20)*l(10)); tmp" | bc -l`
     message "  ReplayGain.....: $REPLAYGAIN"
     message "  Scale factor...: $SCALEFACTOR"
 
+    # Main encoding
     lame --scale $SCALEFACTOR --replaygain-accurate --clipdetect\
          -V 2 --vbr-new -q 0 --lowpass 19.7 -b96\
          --tt "$TITLE"\
@@ -106,6 +108,19 @@ do
          --tn "$TRACK"\
           "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
 
+    # Logging
+    NEWREPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
+    HEADROOM=`cat /tmp/lameout.txt | grep "The waveform does not clip" | awk -F" |dB" '{print $10}'`
+    CLIPPING=`cat /tmp/lameout.txt | grep "gain  by  at least" | awk -F" |dB" '{print $18}'`
+    if [ "$HEADROOM" == "" ]
+    then
+       PASSFAIL="CLIPPING"
+    else
+       PASSFAIL=""
+    fi
+    echo "$SOURCEFILENAME;$REPLAYGAIN;$NEWREPLAYGAIN;$HEADROOM;$CLIPPING;$PASSFAIL" >>$HOME/makemp3.csv
+
+    # Cleanup
     rm -f /tmp/lameout.txt
     touch "$TARGETFILENAME" -r "$SOURCEFILENAME"
     sync
