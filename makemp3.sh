@@ -90,6 +90,18 @@ do
       message ""
     fi
 
+    sox "$SOURCEFILENAME" /tmp/sox.wav stats 2>&1 | tee /tmp/soxout.txt
+#    RMSPEAK=`cat /tmp/soxout.txt | grep "RRMS Pk dB" | awk -F" " '{print $2}'`   | awk -F"dB" '{print $1}'
+    RMSPEAK=`grep "RMS Pk dB" /tmp/soxout.txt | awk '{gsub(/[[:space:]]*/,"",$3); print $4}'`
+
+#    if [ $RMSPEAK -lt 
+    echo $RMSPEAK
+
+    if [ 0 = 1 ]
+    then
+
+    # sox Sacrifice.wav Sacrifice_comp.wav compand 0.1,0.8 6:-70,-60,-20 -5 -90 0.2
+
     # Analyze gain for normalization  
     lame --nohist --replaygain-accurate\
          "$SOURCEFILENAME" /dev/null 2>&1 | tee /tmp/lameout.txt
@@ -124,6 +136,7 @@ do
     rm -f /tmp/lameout.txt
     touch "$TARGETFILENAME" -r "$SOURCEFILENAME"
     sync
+    fi
   else
     message "Incompatible directory structure: $ORIGIN" 
   fi
