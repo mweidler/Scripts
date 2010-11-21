@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # snapback.sh
 #
@@ -14,6 +15,7 @@
 # SERVICING, REPAIR OR CORRECTION.
 #
 #set -x
+
 
 HISTORIES=40
 ENUM=$(seq $((HISTORIES-1)) -1 1)
