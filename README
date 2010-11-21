@@ -25,7 +25,7 @@ makemp3.sh
      Encodes all wav-files in the current directory (and subfolders)
      to mp3-files and copies them to $HOME/MP3 directory.
 
-makebackup.sh <target-path>
+snapback.sh <target-path>
      RSync- and hard-link-based backup script.
 
 
