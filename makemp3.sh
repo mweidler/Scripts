@@ -105,7 +105,12 @@ do
     message "  Scale factor...: $SCALEFACTOR"
 
     # Adjusting normalization gain
-    mp3gain -r -m 1 -k -s s "$TARGETFILENAME"
+    mp3gain -r -m 1 -k -s s "$TARGETFILENAME" | tee /tmp/lameout.txt
+    APPLYGAIN=`tail -1 /tmp/lameout.txt | grep "Applying" | awk -F"change of" '{print $2}' | awk -F" " '{print $1}'`
+    message "  ApplyGain......: $APPLYGAIN"
+
+    # Logging
+    echo "$TARGETFILENAME;$APPLYGAIN" >>~/makemp3.log
 
     # Cleanup
     rm -f /tmp/lameout.txt
