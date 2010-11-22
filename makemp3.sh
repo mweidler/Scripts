@@ -52,7 +52,7 @@ function message {
 #
 TOTALFILES=`find . -type f -iname "*.wav" -print | wc -l`
 FILECOUNTER=1
-  
+
 find . -type f -iname "*.wav" -print0 | while read -d $'\0' file
 do
   ORIGIN=`readlink -f "$file"`
@@ -90,29 +90,8 @@ do
       message ""
     fi
 
-    sox "$SOURCEFILENAME" /tmp/sox.wav stats 2>&1 | tee /tmp/soxout.txt
-#    RMSPEAK=`cat /tmp/soxout.txt | grep "RRMS Pk dB" | awk -F" " '{print $2}'`   | awk -F"dB" '{print $1}'
-    RMSPEAK=`grep "RMS Pk dB" /tmp/soxout.txt | awk '{gsub(/[[:space:]]*/,"",$3); print $4}'`
-
-#    if [ $RMSPEAK -lt 
-    echo $RMSPEAK
-
-    if [ 0 = 1 ]
-    then
-
-    # sox Sacrifice.wav Sacrifice_comp.wav compand 0.1,0.8 6:-70,-60,-20 -5 -90 0.2
-
-    # Analyze gain for normalization  
-    lame --nohist --replaygain-accurate\
-         "$SOURCEFILENAME" /dev/null 2>&1 | tee /tmp/lameout.txt
-
-    REPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
-    SCALEFACTOR=`echo "tmp=e(((1$REPLAYGAIN)/20)*l(10)); tmp" | bc -l`
-    message "  ReplayGain.....: $REPLAYGAIN"
-    message "  Scale factor...: $SCALEFACTOR"
-
     # Main encoding
-    lame --scale $SCALEFACTOR --replaygain-accurate --clipdetect\
+    lame --replaygain-accurate --clipdetect\
          -V 2 --vbr-new -q 0 --lowpass 19.7 -b96\
          --tt "$TITLE"\
          --ta "$ARTIST"\
@@ -120,23 +99,18 @@ do
          --tn "$TRACK"\
           "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
 
-    # Logging
-    NEWREPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
-    HEADROOM=`cat /tmp/lameout.txt | grep "The waveform does not clip" | awk -F" |dB" '{print $10}'`
-    CLIPPING=`cat /tmp/lameout.txt | grep "gain  by  at least" | awk -F" |dB" '{print $18}'`
-    if [ "$HEADROOM" == "" ]
-    then
-       PASSFAIL="CLIPPING"
-    else
-       PASSFAIL=""
-    fi
-    echo "$SOURCEFILENAME;$REPLAYGAIN;$NEWREPLAYGAIN;$HEADROOM;$CLIPPING;$PASSFAIL" >>$HOME/makemp3.csv
+    REPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
+    SCALEFACTOR=`echo "tmp=e(((1$REPLAYGAIN)/20)*l(10)); tmp" | bc -l`
+    message "  ReplayGain.....: $REPLAYGAIN"
+    message "  Scale factor...: $SCALEFACTOR"
+
+    # Adjusting normalization gain
+    mp3gain -r -m 1 -k -s s "$TARGETFILENAME"
 
     # Cleanup
     rm -f /tmp/lameout.txt
     touch "$TARGETFILENAME" -r "$SOURCEFILENAME"
     sync
-    fi
   else
     message "Incompatible directory structure: $ORIGIN" 
   fi
