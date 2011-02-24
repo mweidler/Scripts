@@ -30,7 +30,7 @@ ENUM=$(seq $((HISTORIES-1)) -1 1)
 #
 function syncDirectory {
     echo Sync $1 to backup $2
-    rsync -a --delete --exclude=/lost+found --exclude=.dbus* $1 $2
+    rsync -a --delete --exclude=lost+found --exclude=.dbus* $1 $2
     touch $2
     echo Sync $1 to $2 done
 }
