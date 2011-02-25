@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# git-sync
+#
+# git sync extension.
+#
+# Copyright (C) 2011 Marc Weidler (marc.weidler@web.de)
+#
+# THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+# THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+# WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+# THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+# SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
+# SERVICING, REPAIR OR CORRECTION.
+#
+#set -x
+
+echo "fetching from default..."
+git fetch
+if [[ $? -gt 0 ]]
+then
+   echo "fetch was not successful, aborting sync."
+   exit $?
+fi
+
+echo "merging origin/master..."
+git merge origin/master
+if [[ $? -gt 0 ]]
+then
+   echo "merge was not successful, aborting sync."
+   exit $?
+fi
+
+echo "push to default..."
+git push
+if [[ $? -gt 0 ]]
+then
+   echo "push was not successful, aborting sync."
+   exit $?
+fi
+
+echo "sync successful."
