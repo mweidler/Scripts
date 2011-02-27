@@ -15,7 +15,7 @@
 # SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
 # SERVICING, REPAIR OR CORRECTION.
 
-BINS = $(wildcard *.sh)
+BINS = $(wildcard *.sh git-*)
 
 install:
 	@mkdir -p $(HOME)/bin
