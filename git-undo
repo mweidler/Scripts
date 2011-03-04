@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# git-undo
+#
+# If you've messed up the working tree, but haven't yet committed your mistake,
+# you can return the entire working tree to the last committed state with
+#
+#   git undo
+#
+# Undo the last or pre-last ... commit
+#
+#   git undo <#parent>
+#
+# Copyright (C) 2011 Marc Weidler (marc.weidler@web.de)
+#
+# THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+# THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+# WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+# THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+# SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
+# SERVICING, REPAIR OR CORRECTION.
+#
+#set -x
+
+if [[ $# -eq 0 ]]
+then
+  git reset --hard HEAD
+else
+  if [[ `echo $1 | grep -q [^[:digit:]]` ]]
+  then
+    echo $1 is not a number
+  else
+    git reset --hard HEAD~$1
+  fi
+fi
+
