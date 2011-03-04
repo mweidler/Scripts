@@ -9,7 +9,7 @@
 #
 # Undo the last or pre-last ... commit
 #
-#   git undo <#parent>
+#   git undo <#parent> <file>
 #
 # Copyright (C) 2011 Marc Weidler (marc.weidler@web.de)
 #
@@ -23,15 +23,19 @@
 #
 #set -x
 
+echo "Last commit was" `git log  -1 --pretty="%h %s"`
+
 if [[ $# -eq 0 ]]
 then
   git reset --hard HEAD
 else
-  if [[ `echo $1 | grep -q [^[:digit:]]` ]]
+  if [[ $1 == ${1//[^0-9]/} ]]
   then
-    echo $1 is not a number
+    REV=$1
+    shift
+    git reset --hard HEAD~$REV $*
   else
-    git reset --hard HEAD~$1
+    git reset --hard HEAD $*
   fi
 fi
 
