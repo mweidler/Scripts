@@ -45,7 +45,7 @@ function syncDirectory {
 # Parameter: $1 Kompletter Pfadname Backup-Directory
 #
 function shiftHistory {
-    if [ -d $1/backup.$i ]
+    if [ -d $1/backup.$HISTORIES ]
     then
         echo Removing $1/backup.$HISTORIES
         rm -rf $1/backup.$HISTORIES
