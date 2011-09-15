@@ -48,8 +48,32 @@ function message {
 
 
 ###########################################################################
+# checkDependencies
+#
+# Validate, if all needed tools are installed
+#
+function checkDependencies {
+  lame --help >/dev/null
+  if [[ $? -gt 0 ]]
+  then
+   echo "'lame' is not installed. Please install and retry."
+   exit $?
+  fi
+
+  mp3gain -h 2>/dev/null
+  if [[ $? -gt 0 ]]
+  then
+   echo "'mp3gain' is not installed. Please install and retry."
+   exit $?
+  fi
+}
+
+
+###########################################################################
 # Main loop
 #
+checkDependencies
+
 TOTALFILES=`find . -type f -iname "*.wav" -print | wc -l`
 FILECOUNTER=1
 
