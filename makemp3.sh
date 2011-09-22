@@ -97,12 +97,22 @@ do
     TARGETPATH="$HOME/MP3/$ARTIST/$ALBUM"
     TARGETFILENAME="$TARGETPATH/$TRACK - $TITLE.mp3"
 
+    if [ -e "/$FILEPATH$ALBUM.jpg" ]
+    then
+      COVERART="--ti"
+      COVERARTFILE="/$FILEPATH$ALBUM.jpg"
+    else
+      COVERART=""
+      COVERARTFILE=""
+    fi
+
     message "Encoding ($FILECOUNTER of $TOTALFILES): '$file'"
     message "  Source-Filename: '$SOURCEFILENAME'"
     message "  Artist.........: '$ARTIST'"
     message "  Album..........: '$ALBUM'"
     message "  Track..........: '$TRACK'"
     message "  Title..........: '$TITLE'"
+    message "  Cover-Art......: '$COVERARTFILE'"
     message "  Target-Path....: '$TARGETPATH'"
     message "  Target-Filename: '$TARGETFILENAME'"
     message ""
@@ -121,7 +131,8 @@ do
          --ta "$ARTIST"\
          --tl "$ALBUM"\
          --tn "$TRACK"\
-          "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
+         $COVERART "$COVERARTFILE"\
+         "$SOURCEFILENAME" "$TARGETFILENAME" 2>&1 | tee /tmp/lameout.txt
 
     REPLAYGAIN=`cat /tmp/lameout.txt | grep "ReplayGain" | awk -F" |dB" '{print $2}'`
     SCALEFACTOR=`echo "tmp=e(((1$REPLAYGAIN)/20)*l(10)); tmp" | bc -l`
