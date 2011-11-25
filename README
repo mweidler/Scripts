@@ -28,9 +28,14 @@ makemp3.sh
 snapback.sh <target-path>
      RSync- and hard-link-based backup script.
 
+dlnathumb.sh
+     Creates MiniDLNA conform thumbnails from JPG images.
+
+dlnathumbsync.sh
+     Sync timestamp of movie and thumbnail image.
 
 
-Copyright (C) 2010 Marc Weidler (marc.weidler@web.de)
+Copyright (C) 2011 Marc Weidler (marc.weidler@web.de)
 
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
 THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
