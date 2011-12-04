@@ -26,4 +26,6 @@ do
    convert "$1" -crop 300x416+0+6 -resize 416x416\> -size 416x416 xc:black +swap -gravity center -composite -quality 80 "_$FILENAME.jpg"
    mv "$1" "$1.old"
    mv "_$FILENAME.jpg" "$FILENAME.jpg"
+
+   shift
 done
