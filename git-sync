@@ -33,7 +33,7 @@ then
 fi
 
 echo "push to default..."
-git push --tags
+git push
 if [[ $? -gt 0 ]]
 then
    echo "push was not successful, aborting sync."
