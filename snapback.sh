@@ -105,13 +105,29 @@ then
         syncDirectory /media/share     $BACKUP_PATH/backup.0/
         syncDirectory /home/mweidler   $BACKUP_PATH/backup.0/
 
+        # Verify data integrity
+        echo Data verification, please wait...
+        alvara -cf $BACKUP_PATH/backup.0/share.alr --exclude=*/lost+found /media/share
+        echo $BACKUP_PATH/backup.0/share.alr generated.
+        alvara -vf $BACKUP_PATH/backup.0/share.alr $BACKUP_PATH/backup.0/share
+        echo $BACKUP_PATH/backup.0/share.alr verified.
+
+        # Schreibe alle Daten auf Festplatte
+        echo Sync, please be patient...
+        sync
+        sudo dropcaches
+        alvara -cf $BACKUP_PATH/backup.0/mweidler.alr --exclude=*/.dbus /home/mweidler
+        echo $BACKUP_PATH/backup.0/mweidler.alr generated.
+        alvara -vf $BACKUP_PATH/backup.0/mweidler.alr $BACKUP_PATH/backup.0/mweidler
+        echo $BACKUP_PATH/backup.0/mweidler.alr verified.
+
         echo Timestamp backup
         touch $BACKUP_PATH
 
         # Schreibe alle Daten auf Festplatte
         echo Sync, please be patient...
         sync
-        sleep 5
+
         echo Done.
     else
         echo $BACKUP_PATH does not exists, exiting.
