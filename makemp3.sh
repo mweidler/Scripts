@@ -33,6 +33,10 @@
 #
 #set -x
 
+FLATMODE=0
+LEVEL=1
+ARGC=$#
+
 
 ###########################################################################
 # message
@@ -74,6 +78,23 @@ function checkDependencies {
 #
 checkDependencies
 
+for (( I=1; $I <= $ARGC; I++ ))
+do
+    case "$1" in
+    --flat)
+        FLATMODE="1"
+        echo "FLAT mode enabled."
+        ;;
+    --silent)
+        LEVEL="-10"
+        echo "SILENT mode enabled."
+        ;;
+    esac
+
+    shift
+done
+
+
 TOTALFILES=`find . -type f -iname "*.wav" -print | wc -l`
 FILECOUNTER=1
 
@@ -104,6 +125,12 @@ do
     else
       COVERART=""
       COVERARTFILE=""
+    fi
+
+    if [ $FLATMODE == 1 ]
+    then
+     ARTIST=$TRACK
+     ALBUM=""
     fi
 
     message "Encoding ($FILECOUNTER of $TOTALFILES): '$file'"
@@ -140,7 +167,7 @@ do
     message "  Scale factor...: $SCALEFACTOR"
 
     # Adjusting normalization gain
-    mp3gain -r -m 1 -k -s s "$TARGETFILENAME" | tee /tmp/lameout.txt
+    mp3gain -r -m $LEVEL -k -s s "$TARGETFILENAME" | tee /tmp/lameout.txt
     APPLYGAIN=`tail -1 /tmp/lameout.txt | grep "Applying" | awk -F"change of" '{print $2}' | awk -F" " '{print $1}'`
     message "  ApplyGain......: $APPLYGAIN"
 
